@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Map</title>
+	<style>
+		body, html {
+			padding: 0;
+			margin: 0;
+			width: 100%;
+			height: 100%;
+		}
+		#map {
+			height: 100%;
+			width: 100%;
+		}
+	</style>
+</head>
+<body>
+	<div id="map"></div>
+	<script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&apikey=f7f74222-a0e8-47a6-b4e8-b4e8e6b2307e"></script>
+	<script src="/socket.io/socket.io.js"></script>
+	<script>
+		const socket = io();
+		let control, myMap;
+		
+		ymaps.ready(() => {
+			myMap = new ymaps.Map('map', {center: [47.202179, 38.935617], zoom: 18, controls: ['zoomControl', 'searchControl', 'routeButtonControl']});
+			
+			geolocation();
+			
+			const trafficControl = new ymaps.control.TrafficControl({ state: {providerKey: 'traffic#actual', trafficShown: true}});
+			myMap.controls.add(trafficControl);
+			
+			socket.emit('getMarks');
+			setInterval(() => {myMap.geoObjects.removeAll(); geolocation(); socket.emit('getMarks');}, 5 * 60 * 1000);
+			
+			control = myMap.controls.get('routeButtonControl');
+			control.routePanel.geolocate('from');
+			control.routePanel.options.set({allowSwitch: false, reverseGeocoding: true, types: {}});
+			
+			var backButton = new ymaps.control.Button({
+				data: {content: "На главную"},
+				options: {selectOnClick: false, maxWidth: 160}
+			});
+			backButton.events.add('click', () => location.pathname = '/');
+			myMap.controls.add(backButton);
+		});
+		
+		socket.on('sendMarks', (data) => {
+			for (let info of data) {
+				info.color = '#f45342';
+				if (info.percent < 50) info.color = '#41f453';
+				else if (info.percent < 80) info.color = '#f4c141';
+				myMap.geoObjects.add(new ymaps.Placemark([info.lat, info.lng], {
+					balloonContent: `id: ${info.idtrash}<br>percent: ${info.percent}<br> <button onclick='route(${info.lat}, ${info.lng})'>Маршрут</buttom>`
+				}, {
+					preset: info.percent < 80 ? 'islands#circleIcon' : 'islands#circleDotIcon',
+					iconColor: info.color
+				}));
+			}
+		});
+		
+		function geolocation() {
+			const geolocation = ymaps.geolocation;
+			geolocation.get({provider: 'browser', mapStateAutoApply: true}).then(function (result) {result.geoObjects.options.set('preset', 'islands#blueCircleIcon');myMap.geoObjects.add(result.geoObjects);});
+		}
+		
+		function route(lat, long) {
+			control.routePanel.state.set({fromEnabled: true, toEnabled: false, to: lat + ', ' + long});
+			control.state.set('expanded', true);
+		}
+	</script>
+</body>
+</html>
