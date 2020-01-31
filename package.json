@@ -13,6 +13,6 @@
 		"mysql-utilities": "^1.1.0-alpha.3",
 		"mysql2": "^2.1.0",
 		"socket.io": "^2.3.0",
-      "cookie": "latest"
+  	"cookie": "latest"
     }
 }

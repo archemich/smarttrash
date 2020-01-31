@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<meta charset="UTF-8">
+	<title>Manager</title>
+	<style>
+		body, html {
+			padding: 0;
+			margin: 0;
+			width: 100%;
+			height: 100%;
+		}
+		/*.main {margin: 0 auto;}*/
+		.map {
+			display: flex;
+		}
+		.map>#map {
+			width: 100%;
+			height: 600px;
+		}
+		.item-list {
+			width: 500px;
+			height: 580px;
+			overflow-y: auto;
+			overflow-x: hidden;
+		}
+		.item-list>.item {
+			width: 250px;
+			border-bottom: 2px solid #ffdb4d;
+			padding: 10px 25px;
+		}
+		.item-list>.item>button {
+			font-size: 15px;
+			padding: 4px 10px;
+		}
+		p.login {
+			font-size: 20px;
+			font-family: verdana;
+			margin: 0 0 10px 0;
+		}
+		button {
+			border-radius: 3px;
+			background: #fff;
+			border: 1px solid #ccc;
+			padding: 2px 7px;
+			cursor: pointer;
+		}
+		button:hover {
+			background: #eee;
+			border: 1px solid #aaa;
+		}
+		#sortTrash {
+			margin-left: 2px;
+			width: 298px;
+			height: 20px;
+			
+		}
+		.map>.list {
+			width: 310px;
+			height: 600px;
+		}
+	</style>
+</head>
+<body>
+<div class="map">
+	<div class="list">
+		<label for="sortTrash">Сортировка: </label>
+		<select id="sortTrash" onchange="sortT()">
+			<option value="id" selected>По номеру</option>
+			<option value="percent">По заполниности</option>
+		</select>
+		<div id="trashs" class="item-list"></div>
+	</div>
+	<div id="map"></div>
+	<div id="users" class="item-list"></div>
+</div>
+
+<script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&apikey=f7f74222-a0e8-47a6-b4e8-b4e8e6b2307e"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script type="text/javascript">
+	const socket = io();
+	let myMap, multiRoute, myGeoObjects;
+	let temp = [[47.215854, 38.912027]], tempView = 'Ростовская область, Таганрог, Смирновский переулок, 18',
+		forClean = [-1];
+	socket.emit('getManagerData', {trash: 1, driver: 1});
+	
+	ymaps.ready(async () => {
+		const clearPointButton = new ymaps.control.Button({data: {content: 'Очистить маршрут'}, options: {selectOnClick: false, maxWidth: 150}});
+		const statistic = new ymaps.control.Button({data: {content: 'Статистика'}, options: {selectOnClick: false, maxWidth: 150}});
+		
+		clearPointButton.events.add('click', () => {
+			myMap.geoObjects.remove(multiRoute);forClean.shift();
+			for (let i of forClean) myGeoObjects.get(i-1).options.set({openBalloonOnClick: 1, iconColor: myGeoObjects.get(i-1).options._options.iconColorDefault});
+			temp = [[47.215854, 38.912027]];
+			tempView = 'Ростовская область, Таганрог, Смирновский переулок, 18';
+			forClean = [-1];
+		});
+		
+		statistic.events.add('click', () => location.pathname = '/manager/statistic');
+		
+		myMap = new ymaps.Map('map', {center: [47.22, 38.92], zoom: 14, controls: ['zoomControl', 'searchControl', clearPointButton, statistic]});
+		// multiRoute = new ymaps.multiRouter.MultiRoute({referencePoints: temp, params: {results: 1}});
+		// myMap.geoObjects.add(multiRoute);
+		myGeoObjects = new ymaps.GeoObjectCollection();
+		socket.emit('getMarks');
+		
+		for (let item of document.getElementsByName('address')) await getAddress(item, [item.dataset.lat, item.dataset.lng]);
+		for (let item of document.getElementsByName('way')) if (item.dataset.way != 'null') loadWay(item.id, item.dataset.way);
+	});
+	
+	socket.on('sendMarks', (data) => {
+		for (let info of data) {
+			info.color = '#f45342';
+			if (info.percent < 50) info.color = '#41f453';
+			else if (info.percent < 80) info.color = '#f4c141';
+			myGeoObjects.add(new ymaps.Placemark([info.lat, info.lng], {
+				balloonContent: `Заполненость: ${info.percent}<br><button id='buttonMark${info.idtrash}' onclick='route(${info.idtrash}, [${info.lat}, ${info.lng}])'>Добавить в маршрут</buttom>`,
+				hintContent: info.idtrash
+			}, {
+				preset: info.percent < 80 ? 'islands#circleIcon' : 'islands#circleDotIcon',
+				iconColor: info.forClean ? '#000000' : info.color,
+				iconColorDefault: info.color,
+				openBalloonOnClick: !info.forClean
+			}));
+		}
+		myMap.geoObjects.add(myGeoObjects);
+	});
+	
+	socket.on('sendManagerData', (data) => {
+		if (data.trashs) {
+			document.getElementById('trashs').innerHTML = '';
+			for (let trash of data.trashs) document.getElementById('trashs').innerHTML += `
+<div class="item">
+	<p class="id">ID: ${trash.idtrash}</p>
+	<p>percent: ${trash.percent}</p>
+	<progress max="100" value="${trash.percent}"></progress>
+	<p name="address" id="address${trash.idtrash}" data-lat="${trash.lat}" data-lng="${trash.lng}"></p>
+	<button onclick="focusMap([${trash.lat}, ${trash.lng}]);">Показать</button>
+</div>`;
+		}
+		if (data.drivers) {
+			document.getElementById('users').innerHTML = '';
+			for (let user of data.drivers) document.getElementById('users').innerHTML += `
+<div class="item">
+	<p class="login">${user.login}</p>
+	<p name="way" id="way.${user.login}" data-way="${user.way}">${user.way ? 'Ростовская область, Таганрог, Смирновский переулок, 18' : 'Маршрут не установлен'}</p>
+	<button ${user.way ? 'disabled' : ''} id="selectCarId.${user.login}" onclick="selectCar('${user.login}')">Назначить маршрут</button>
+	<button ${user.way ? '' : 'disabled'} id="deleteCarId.${user.login}" onclick="deleteRoute('${user.login}')">Удалить маршрут</button>
+</div>`;
+		}
+	});
+	
+	async function focusMap(argument) {await myMap.panTo(argument, {flying: 1});myMap.setZoom(18);}
+	async function getAddress(item, coords) {let res = await ymaps.geocode(coords);item.innerText = 'address: ' + res.geoObjects.get(0).getAddressLine().slice(8);}
+	function loadWay(id, ways) {for (let way of ways.split(',')) document.getElementById(id).innerHTML += '<br>'+document.getElementById('address'+way).innerText.slice(9);}
+	function sortT() {const select = document.getElementById('sortTrash');socket.emit('getManagerData', {trash: 1}, select.options[select.selectedIndex].value);}
+	
+	function route(id, coords) {
+		myMap.geoObjects.remove(multiRoute);
+		document.getElementById('buttonMark'+id).disabled = true;
+		myGeoObjects.get(id-1).options.set({openBalloonOnClick: 0, iconColor: '#000000'});
+		forClean.push(id);temp.push(coords);
+		tempView += '<br>'+document.getElementById('address'+id).innerText.slice(9);
+		multiRoute = new ymaps.multiRouter.MultiRoute({referencePoints: temp, params: {results: 1}});
+		myMap.geoObjects.add(multiRoute);
+	}
+	
+	function selectCar(id) {
+		if (temp.length < 2) {alert('Вы не добавили контейнеры в маршрут.'); return;}
+		forClean.shift();
+		socket.emit('addWay', id, forClean.join(','));
+		myMap.geoObjects.remove(multiRoute);
+		document.getElementById('selectCarId.'+id).disabled = true;
+		document.getElementById('deleteCarId.'+id).disabled = false;
+		document.getElementById('way.'+id).innerHTML = tempView;
+		document.getElementById('way.'+id).dataset.way = forClean.join(',');
+		myMap.geoObjects.remove(multiRoute);
+		temp = [[47.215854, 38.912027]];
+		tempView = 'Ростовская область, Таганрог, Смирновский переулок, 18';
+		forClean = [-1];
+	}
+	
+	function deleteRoute(id) {
+		socket.emit('delWay', id);
+		for (let i of document.getElementById('way.'+id).dataset.way.split(',')) myGeoObjects.get(i-1).options.set({openBalloonOnClick: 1, iconColor: myGeoObjects.get(i-1).options._options.iconColorDefault});
+		document.getElementById('way.'+id).innerHTML = 'Маршрут не установлен';
+		document.getElementById('selectCarId.'+id).disabled = false;
+		document.getElementById('deleteCarId.'+id).disabled = true;
+	}
+</script>
+</body>
+</html>

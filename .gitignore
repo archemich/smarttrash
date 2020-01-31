@@ -1,1 +1,5 @@
 node_modules
+dump.sql
+.idea/webServers.xml
+.idea/deployment.xml
+.idea/codeStyles/codeStyleConfig.xml
