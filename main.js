@@ -14,8 +14,6 @@ util.upgrade(con);
 util.introspection(con);
 con.query("SET SESSION wait_timeout = 604800");
 
-app.use(express.static('public'));
-
 try {require('./io')(io, con)} catch (e) {console.warn(e)}
 
 function checkAccess(req, res, next) {
