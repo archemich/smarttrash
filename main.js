@@ -56,6 +56,8 @@ app.post('/login', async (req, res) => {
 	res.redirect(['manager'].indexOf(req.body.login) == -1 ? '/driver' : '/manager');
 });
 
+app.get('/logout', (req, res) => {if (req.cookies.login) res.clearCookie('login'); res.redirect('/')});
+
 app.get('/driver', checkAccess, (req, res) => {
 	res.sendFile(process.env.PWD+'/views/driver.html');
 });

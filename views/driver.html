@@ -22,7 +22,8 @@
 <script>
 	const socket = io();
 	let myMap;
-	ymaps.ready(() => {myMap = new ymaps.Map('map', {center: [47.202179, 38.935617], zoom: 18, controls: ['zoomControl', 'searchControl']});socket.emit('getDriverPath');});
+	ymaps.ready(() => {const logout = new ymaps.control.Button({data: {content: 'Выйти'}, options: {selectOnClick: false, maxWidth: 150}});logout.events.add('click', () => location.pathname = '/logout');
+		myMap = new ymaps.Map('map', {center: [47.202179, 38.935617], zoom: 18, controls: ['zoomControl', 'searchControl', logout]});socket.emit('getDriverPath');});
 	socket.on('sendDriverPath', (data) => {data.unshift([47.215854, 38.912027]);myMap.geoObjects.add(new ymaps.multiRouter.MultiRoute({referencePoints: data, params: {results: 1}}, {boundsAutoApply: true}));});
 </script>
 </body>

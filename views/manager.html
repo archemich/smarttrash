@@ -87,6 +87,7 @@
 	ymaps.ready(async () => {
 		const clearPointButton = new ymaps.control.Button({data: {content: 'Очистить маршрут'}, options: {selectOnClick: false, maxWidth: 150}});
 		const statistic = new ymaps.control.Button({data: {content: 'Статистика'}, options: {selectOnClick: false, maxWidth: 150}});
+		const logout = new ymaps.control.Button({data: {content: 'Выйти'}, options: {selectOnClick: false, maxWidth: 150}});
 		
 		clearPointButton.events.add('click', () => {
 			myMap.geoObjects.remove(multiRoute);forClean.shift();
@@ -97,8 +98,9 @@
 		});
 		
 		statistic.events.add('click', () => location.pathname = '/manager/statistic');
+		logout.events.add('click', () => location.pathname = '/logout');
 		
-		myMap = new ymaps.Map('map', {center: [47.22, 38.92], zoom: 14, controls: ['zoomControl', 'searchControl', clearPointButton, statistic]});
+		myMap = new ymaps.Map('map', {center: [47.22, 38.92], zoom: 14, controls: ['zoomControl', 'searchControl', logout, clearPointButton, statistic]});
 		// multiRoute = new ymaps.multiRouter.MultiRoute({referencePoints: temp, params: {results: 1}});
 		// myMap.geoObjects.add(multiRoute);
 		myGeoObjects = new ymaps.GeoObjectCollection();
