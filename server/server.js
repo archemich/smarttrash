@@ -1,40 +1,35 @@
 const express = require('express')
 	, app = express()
-	, http = require('http').Server(app)
+	, http = require('http').createServer(app)
 	, io = require('socket.io').listen(http)
 	, md5 = require('js-md5')
 	, jwt = require('./jwt')
+	, conf = require('../config')
+	, auth = require('./auth')
 ;
 
-let con = require('mysql2').createConnection({user: "trash", password: "trash", database: "trash", charset: "utf8mb4"});
+let con = require('mysql2').createConnection({user: conf.user, password: conf.password, database: conf.database, charset: "utf8mb4"});
 con.on('error', (err) => {console.warn(err)});
 con.connect((err) => {if (err) return console.error('error connecting: ' + err.stack); console.log('mysql for / as id ' + con.threadId);});
 let util = require('mysql-utilities');
+const { config } = require('process');
 util.upgrade(con);
 util.introspection(con);
-con.query("SET SESSION wait_timeout = 604800");
+con.query(`SET SESSION wait_timeout = ${conf.wait_timeout}`);
 
 try {require('./io')(io, con)} catch (e) {console.warn(e)}
 
-function checkAccess(req, res, next) {
-	if (!req.cookies.login) {res.redirect('/login');return;}
-	if (!jwt.verifyJWT(req.cookies.login)) {res.clearCookie('login');res.redirect('/login');return;}
-	
-	let user = jwt.decodeJWT(req.cookies.login).login;
-	if (['manager'].indexOf(user) == -1 && req.originalUrl == '/manager') {res.redirect('/driver'); return;}
-	else if (['manager'].indexOf(user) != -1 && req.originalUrl == '/driver') {res.redirect('/manager'); return;}
-	
-	next();
-}
 
 app.use(express.urlencoded({ extended: true })).use(express.json()).use(require('cookie-parser')());
 
 app.get('/', (req, res) => {
-	res.sendFile(process.env.PWD+'/views/index.html');
+	res.sendFile(__projectdir + '/views/index.html');
+
 });
 
 app.get('/map', (req, res) => {
-	res.sendFile(process.env.PWD+'/views/map.html');
+	res.sendFile(__projectdir + '/views/map.html');
+
 });
 
 app.get('/login', (req, res) => {
@@ -43,7 +38,9 @@ app.get('/login', (req, res) => {
 		return;
 	}
 	
-	res.sendFile(process.env.PWD+'/views/login.html');
+	res.sendFile(__projectdir + '/views/login.html');
+	
+
 });
 
 app.post('/login', async (req, res) => {
@@ -56,14 +53,19 @@ app.post('/login', async (req, res) => {
 	res.redirect(['manager'].indexOf(req.body.login) == -1 ? '/driver' : '/manager');
 });
 
-app.get('/logout', (req, res) => {if (req.cookies.login) res.clearCookie('login'); res.redirect('/')});
-
-app.get('/driver', checkAccess, (req, res) => {
-	res.sendFile(process.env.PWD+'/views/driver.html');
+app.get('/logout', (req, res) => {
+	auth.clearCookie(req, res, cookie);
+	res.redirect('/');
 });
 
-app.get('/manager', checkAccess, (req, res) => {
-	res.sendFile(process.env.PWD+'/views/manager.html');
+app.get('/driver', auth.checkAccess, auth.authorize, (req, res) => {
+	res.sendFile(__projectdir + '/views/driver.html');
+
+});
+
+app.get('/manager', auth.checkAccess, auth.authorize, (req, res) => {
+	res.sendFile(__projectdir + '/views/manager.html');
+
 });
 
 app.post('/trash', (req, res) => {
