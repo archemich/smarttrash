@@ -82,7 +82,58 @@
 	let myMap, multiRoute, myGeoObjects;
 	let temp = [[47.215854, 38.912027]], tempView = 'Ростовская область, Таганрог, Смирновский переулок, 18',
 		forClean = [-1];
-	socket.emit('getManagerData', {trash: 1, driver: 1});
+	//socket.emit('getManagerData', {trash: 1, driver: 1});
+	let req = new XMLHttpRequest();
+	req.open("GET", '/manager/data', true);
+	req.setRequestHeader('Content-type', 'application/json');
+	req.onload = function()
+	{
+		if (req.status != 200){
+			return;
+		}
+			res = JSON.parse(req.response);
+			if (res.trashs) {
+				document.getElementById('trashs').innerHTML = '';
+				for (let trash of res.trashs) document.getElementById('trashs').innerHTML += `
+	<div class="item">
+		<p class="id">ID: ${trash.idtrash}</p>
+		<p>percent: ${trash.percent}</p>
+		<progress max="100" value="${trash.percent}"></progress>
+		<p name="address" id="address${trash.idtrash}" data-lat="${trash.lat}" data-lng="${trash.lng}"></p>
+		<button onclick="focusMap([${trash.lat}, ${trash.lng}]);">Показать</button>
+	</div>`;
+			}
+			if (res.drivers) {
+				document.getElementById('users').innerHTML = '';
+				for (let user of res.drivers) document.getElementById('users').innerHTML += `
+	<div class="item">
+		<p class="login">${user.login}</p>
+		<p name="way" id="way.${user.login}" data-way="${user.way}">${user.way ? 'Ростовская область, Таганрог, Смирновский переулок, 18' : 'Маршрут не установлен'}</p>
+		<button ${user.way ? 'disabled' : ''} id="selectCarId.${user.login}" onclick="selectCar('${user.login}')">Назначить маршрут</button>
+		<button ${user.way ? '' : 'disabled'} id="deleteCarId.${user.login}" onclick="deleteRoute('${user.login}')">Удалить маршрут</button>
+	</div>`;
+			}
+			else {
+				for (let info of res) {
+				info.color = '#f45342';
+				if (info.percent < 50) info.color = '#41f453';
+				else if (info.percent < 80) info.color = '#f4c141';
+				myGeoObjects.add(new ymaps.Placemark([info.lat, info.lng], {
+					balloonContent: `Заполненость: ${info.percent}<br><button id='buttonMark${info.idtrash}' onclick='route(${info.idtrash}, [${info.lat}, ${info.lng}])'>Добавить в маршрут</buttom>`,
+					hintContent: info.idtrash
+				}, {
+					preset: info.percent < 80 ? 'islands#circleIcon' : 'islands#circleDotIcon',
+					iconColor: info.forClean ? '#000000' : info.color,
+					iconColorDefault: info.color,
+					openBalloonOnClick: !info.forClean
+				}));
+			}
+		myMap.geoObjects.add(myGeoObjects);
+		}
+	
+	}
+	req.send(JSON.stringify({trash: 1, driver: 1}));
+	
 	
 	ymaps.ready(async () => {
 		const clearPointButton = new ymaps.control.Button({data: {content: 'Очистить маршрут'}, options: {selectOnClick: false, maxWidth: 150}});
@@ -104,7 +155,7 @@
 		// multiRoute = new ymaps.multiRouter.MultiRoute({referencePoints: temp, params: {results: 1}});
 		// myMap.geoObjects.add(multiRoute);
 		myGeoObjects = new ymaps.GeoObjectCollection();
-		socket.emit('getMarks');
+		//socket.emit('getMarks');
 		
 		for (let item of document.getElementsByName('address')) await getAddress(item, [item.dataset.lat, item.dataset.lng]);
 		for (let item of document.getElementsByName('way')) if (item.dataset.way != 'null') loadWay(item.id, item.dataset.way);
