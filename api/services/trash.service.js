@@ -1,0 +1,26 @@
+const db = require('../config/db');
+
+module.exports = {
+    getTrashs: (id) => {
+        if (id){
+            db.query(`SELECT * FROM trashs where id = ${id}`).then(result => {
+            console.log(result);
+            return result;
+        }).catch(err => {
+            console.log(err);
+            return false;
+        });
+        }
+        else{ 
+            db.query('SELECT * FROM trashs').then(result => {
+                console.log(result);
+                return result;
+            }).catch(err => {
+                console.log(err);
+                return false;
+
+            });
+        }
+        
+    }
+}
