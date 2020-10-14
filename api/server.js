@@ -65,21 +65,6 @@ app.get('/driver', auth.checkAccess, (req, res) => {
 
 app.get('/manager', auth.checkAccess, (req, res) => {
 	res.sendFile(__projectdir + '/views/.managerhtml');
-	
-});
-
-// app.get('/manager/data', jsonParser, (req, res) => {
-// 	console.log(req.body);
-// 	if (!req.body); return res.sendStatus(400);
-// 	webapp.getManagerData(req.body.trash, req.body.driver, req.body.filter)
-	
-// });
-
-app.post('/trash', (req, res) => {
-	if (!req.body.per || !req.body.id || !req.body.batt) {res.end();return;}
-	console.log(req.body);
-	con.query('UPDATE trashs SET forClean = if(percent > ?, 0, 1), percent = ?, battery = ? WHERE idtrash = ?', [req.body.per, req.body.per, req.body.batt, req.body.id], () => {});
-	res.end();
 });
 
 // Handle 404 AND 500

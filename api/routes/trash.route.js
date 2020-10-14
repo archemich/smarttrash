@@ -6,9 +6,7 @@ const express = require('express')
 router
     .route('/')
     .get(TrashController.getTrash)
-    .post(TrashController.createTrash)
-    .put(TrashController.updateTrash)
-    .delete(TrashController.deleteTrash);
+    .post(TrashController.updateTrash)
 
 
     module.exports = router;

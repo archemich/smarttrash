@@ -18,5 +18,12 @@ module.exports = {
                 return res.sendStatus(404);     //Мусорки не найдены.
             }
         }
+    },
+
+    updateTrash: (req, res) => {
+        if (!req.body.per || !req.body.id || !req.body.batt) {res.end();return;}
+        console.log(req.body);
+        TrashService.updateTrash(req.body.id, req.body.per, req.body.batt);
+        res.end();
     }
 }

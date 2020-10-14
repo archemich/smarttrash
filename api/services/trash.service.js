@@ -21,6 +21,14 @@ module.exports = {
 
             });
         }
-        
+    },
+
+    updateTrash: (id, per, batt) => {
+        db.query('UPDATE trashs SET forClean = if(percent > ?, 0, 1), percent = ?, battery = ? WHERE idtrash = ?', [per, per, batt, id])
+        .then(result => {
+            console.log(result)
+        }).catch(err => {
+            console.log(err);
+        }); 
     }
 }
