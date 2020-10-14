@@ -6,7 +6,7 @@ module.exports = {
     getTrash: (req, res) => {
         if (req.query.id) {
             if(result = TrashService.getTrashs(id)){
-                return res.status(200).json({trashs: result});
+                return res.status(200).json(JSON.stringify({trashs: result}));
             }
             else return res.sendStatus(404);    //Мусорка по id не найдена.
         }
@@ -23,7 +23,7 @@ module.exports = {
     updateTrash: (req, res) => {
         if (!req.body.per || !req.body.id || !req.body.batt) {res.end();return;}
         console.log(req.body);
-        TrashService.updateTrash(req.body.id, req.body.per, req.body.batt);
-        res.end();
+        if (result = TrashService.updateTrash(req.body.id, req.body.per, req.body.batt))
+            return res.status(200).json(JSON.stringify(result));
     }
 }

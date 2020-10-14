@@ -3,7 +3,7 @@ const db = require('../config/db');
 module.exports = {
     getTrashs: (id) => {
         if (id){
-            db.query(`SELECT * FROM trashs where id = ${id}`).then(result => {
+            db.query(`SELECT * FROM trashs WHERE id = ${id}`).then(result => {
             console.log(result);
             return result;
         }).catch(err => {
@@ -27,8 +27,10 @@ module.exports = {
         db.query('UPDATE trashs SET forClean = if(percent > ?, 0, 1), percent = ?, battery = ? WHERE idtrash = ?', [per, per, batt, id])
         .then(result => {
             console.log(result)
+            return result;
         }).catch(err => {
             console.log(err);
+            return false;
         }); 
     }
 }
