@@ -1,6 +1,7 @@
 const express = require('express')
     , router = express.Router()
-    , TrashController = require('../controllers/trash.controllers');
+    , TrashController = require('../controllers/trash.controllers')
+    ;
 
 
 router
@@ -9,4 +10,4 @@ router
     .post(TrashController.updateTrash)
 
 
-    module.exports = router;
+module.exports = router;

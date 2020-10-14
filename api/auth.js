@@ -1,3 +1,5 @@
+const jwt = require('./middleware/jwt.js');
+
 module.exports = {
 
         checkAccess: (req, res, next) => {
