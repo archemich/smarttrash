@@ -14,7 +14,7 @@ const express = require('express'),
     
 
     app.use('/api', require('./routes/index'));
-    //app.use('/api/users', require('./routes/users.route'));
+    app.use('/api/users', require('./routes/users.route'));
     app.use('/api/trash', require('./routes/trash.route'));
 
 
