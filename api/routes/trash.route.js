@@ -1,13 +1,13 @@
 const express = require('express')
     , router = express.Router()
-    , TrashController = require('../controllers/trash.controllers')
+    , TrashController = require('../controllers/trash.controller')
     ;
 
 
 router
     .route('/')
     .get(TrashController.getTrash)
-    .post(TrashController.updateTrash)
+    .put(TrashController.updateTrash)
 
 
 module.exports = router;

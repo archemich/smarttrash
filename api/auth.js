@@ -1,4 +1,4 @@
-const jwt = require('./middleware/jwt.js');
+const jwt = require('./utils/jwt.js');
 
 module.exports = {
 

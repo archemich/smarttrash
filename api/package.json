@@ -1,9 +1,9 @@
 {
 	"name": "smarttrash",
-	"main": "main.js",
+	"main": "app.js",
 	"private": true,
 	"scripts": {
-		"run": "node ."
+		"run": "node ./app.js"
 	},
 	"dependencies": {
 		"body-parser": "^1.19.0",

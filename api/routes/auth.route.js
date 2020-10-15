@@ -4,8 +4,7 @@ const express = require('express')
     ;
 
 router
-    .post(AuthController.login)
-
+    .post('/login',AuthController.login)
 
 module.exports = router
 

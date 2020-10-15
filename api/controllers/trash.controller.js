@@ -5,13 +5,13 @@ const TrashService = require("../services/trash.service")
 module.exports = {
     getTrash: (req, res) => {
         if (req.query.id) {
-            if(result = TrashService.getTrashs(id)){
-                return res.status(200).json(JSON.stringify({trashs: result}));
+            if(result = await TrashService.getTrashs(id)){
+                return res.status(200).json({trashs: result});
             }
             else return res.sendStatus(404);    //Мусорка по id не найдена.
         }
         else {
-            if (result = TrashService.getTrashs()) {
+            if (result = await TrashService.getTrashs()) {
             return res.status(200).json({trashs: result});
             }
             else {
@@ -21,9 +21,12 @@ module.exports = {
     },
 
     updateTrash: (req, res) => {
-        if (!req.body.per || !req.body.id || !req.body.batt) {res.end();return;}
+        if (!req.body.per || !req.body.id || !req.body.batt) {
+            res.status(400).json({message: "No data recieved"});
+            return;
+        }
         console.log(req.body);
-        if (result = TrashService.updateTrash(req.body.id, req.body.per, req.body.batt))
-            return res.status(200).json(JSON.stringify(result));
+        if (result = await TrashService.updateTrash(req.body.id, req.body.per, req.body.batt))
+            return res.status(200).json(result);
     }
 }

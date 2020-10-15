@@ -1,4 +1,4 @@
-const jwt = require('./jwt');
+const jwt = require('./utils/jwt');
 module.exports = {
 
     getManagerData: (trash, driver, filter) => {

@@ -2,8 +2,8 @@ const db = require('../config/db');
 
 
 module.exports = {
-    getUser: () => {
-        db.query('SELECT * FROM users WHERE login = ? AND password = ?', [req.body.login, md5(req.body.password)])
+    getUser: async (login) => {
+        db.query(`SELECT * FROM users WHERE login = ${login}`)
         .then(result => {
            console.log(result);
            return result;
