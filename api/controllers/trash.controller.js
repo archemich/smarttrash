@@ -3,9 +3,10 @@ const TrashService = require("../services/trash.service")
 
 
 module.exports = {
-    getTrash: (req, res) => {
+    getTrash: async (req, res) => {
         if (req.query.id) {
-            if(result = await TrashService.getTrashs(id)){
+            result = await TrashService.getTrashs(id)
+            if(result){
                 return res.status(200).json({trashs: result});
             }
             else return res.sendStatus(404);    //Мусорка по id не найдена.
@@ -20,7 +21,7 @@ module.exports = {
         }
     },
 
-    updateTrash: (req, res) => {
+    updateTrash: async (req, res) => {
         if (!req.body.per || !req.body.id || !req.body.batt) {
             res.status(400).json({message: "No data recieved"});
             return;

@@ -5,7 +5,6 @@ const express = require('express'),
     
 
     router
-        .route('/')
         .get('/manager', UsersController.getManagerData)
         .get('/driver', UsersController.getDriverPath)
 
