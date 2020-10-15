@@ -1,5 +1,4 @@
-const bcrypt = require('bcrypt')
-    , AuthService = require('../services/auth.service');
+const  AuthService = require('../services/auth.service');
 
 
 module.exports = {
