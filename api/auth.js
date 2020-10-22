@@ -2,7 +2,7 @@ const jwt = require('./utils/jwt.js');
 
 module.exports = {
 
-        checkAccess: (req, res, next) => {
+        checkAccess(req, res, next) {
         if (!req.cookies.login) {res.redirect('/login'); return;}
         if (!jwt.verifyJWT(req.cookies.login)) {res.clearCookie('login');res.redirect('/login');return;}
         
@@ -13,7 +13,7 @@ module.exports = {
         next();
         },
         
-        clearCookie: (req, res, cookie) => {
+        clearCookie(req, res, cookie) {
             if (req.cookies.login) 
                 res.clearCookie(cookie);
         },

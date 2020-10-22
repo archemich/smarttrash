@@ -16,4 +16,14 @@ module.exports = {
         console.log(result);
         return result;
     },
+
+    async addWay(login, way) {
+        con.update('users', {login, way}, () => {}); 
+        con.query('UPDATE trashs SET forClean = 1 WHERE idtrash IN (?)', [way.split(',')], () => {})
+    },
+
+    async delWay(login) {
+        con.queryValue('SELECT way FROM users WHERE login = ?', [login], (err, way) => {con.query('UPDATE trashs SET forClean = 0 WHERE idtrash IN (?)', [way.split(',')], () => {})}); 
+        con.update('users', {login, way: null}, () => {})
+	},
 }

@@ -1,11 +1,15 @@
-const express = require('express'),
-    router = express.Router(),
-    UsersController = require('../controllers/users.controller');
+const router = require('express').Router()
+    , UsersController = require('../controllers/users.controller')
+    ;
 
-    
+router
+    .route('/manager')
+    .get(UsersController.getManagerData)
+    ;
 
-    router
-        .get('/manager', UsersController.getManagerData)
-        .get('/driver', UsersController.getDriverPath)
+router
+    .route('/driver')
+    .get(UsersController.getDriverPath)
+    ;
 
-    module.exports = router;
+module.exports = router;

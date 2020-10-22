@@ -1,5 +1,4 @@
-const e = require("express");
-const TrashService = require("../services/trash.service")
+const TrashService = require("../services/trash.service");
 
 
 module.exports = {
