@@ -1,12 +1,12 @@
 const mysql = require("mysql2");
 
-const pool = mysql.createPool({
-    connectionLimit: 50,
+const con = mysql.createConnection({
     host: "localhost",
     user: "trash",
     password: "trash",
-    database: "trash"
+    database: "trash",
+    charset: "utf8mb4"
 }).promise();
 
-pool.query('SET SESSION wait_timeout = 604800}');
-module.exports = pool;
+con.query('SET SESSION wait_timeout = 604800}');
+module.exports = con;
