@@ -2,7 +2,7 @@ const  AuthService = require('../services/auth.service');
 
 
 module.exports = {
-    login: (req, res) => {
+    async login(req, res) {
         
         let user = await AuthService.getUser(req.body.login);
         if (!user) {
@@ -10,7 +10,7 @@ module.exports = {
             return;
         }
         res.cookie('login', jwt.generateJWT({login: user[0][0].login}), {httpOnly: true});
-        res.sendStatus(200);
+        res.status(200).json({message: "Пользователь авторизован"});
     },
 
     

@@ -1,7 +1,7 @@
 const db = require('../config/db');
 
 module.exports = {
-    getTrashs: async (id, filter) => {
+    async getTrashs(id, filter) {
         if (id){
             db.query(`SELECT * FROM trashs WHERE id = ${id}`).then(result => {
             console.log(result);
@@ -34,14 +34,9 @@ module.exports = {
         }
     },
 
-    updateTrash: async (id, per, batt) => {
-        db.query('UPDATE trashs SET forClean = if(percent > ?, 0, 1), percent = ?, battery = ? WHERE idtrash = ?', [per, per, batt, id])
-        .then(result => {
-            console.log(result)
-            return result;
-        }).catch(err => {
-            console.log(err);
-            return false;
-        }); 
+    async updateTrash(id, per, batt) {
+        result = await db.query('UPDATE trashs SET forClean = if(percent > ?, 0, 1), percent = ?, battery = ? WHERE idtrash = ?', [per, per, batt, id])
+        console.log(result)
+        return result;
     }
 }

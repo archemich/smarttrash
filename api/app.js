@@ -2,20 +2,19 @@ const { Router } = require('express');
 
 const express = require('express'),
     app = express(),
-    bodyParser = require('body-parser');
     router = express.Router();
 
     const host = 'localhost';
     const port = 3000;
 
     app.use(express.json());
-    app.use(bodyParser.urlencoded({extended: true}));
+    app.use(express.urlencoded({extended: true}));
     app.use(require('cookie-parser')());
     
 
-    app.use('/api', require('./routes/index'));
-    app.use('/api/users', require('./routes/users.route'));
-    app.use('/api/trash', require('./routes/trash.route'));
+    app.use('/', require('./routes/index'));
+    app.use('/users', require('./routes/users.route'));
+    app.use('/trash', require('./routes/trash.route'));
 
 
     app.use(function (req, res) {

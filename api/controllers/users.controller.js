@@ -12,10 +12,10 @@ module.exports = {
     //     res.status(200).sendFile(__projectdir + '/views/manager.html');
     // },
 
-    getManagerData: async (req, res) => {
+    async getManagerData(req, res) {
         console.log(req.body);
         if (!req.body) 
-            return res.status(400).send("No data recieved");
+            return res.sendStatus(400);
         trash = req.body.trash;
         driver = req.body.driver;
         filter = req.body.filter;
@@ -37,10 +37,10 @@ module.exports = {
 			return res.status(200).json(sendData);
         },
         
-    getDriverPath: async (req, res) => {
+    async getDriverPath(req, res) {
         let user = require('cookie').parse(socket.request.headers.cookie).login;
         if (!jwt.verifyJWT(user)) {
-            return res.status(401).json({message: "User unauthorized"});
+            return res.status(401).json({message: "Пользователь не авторизован"});
         }
         user = jwt.decodeJWT(user).login;
         let data = await UsersService.getDriverPath();
