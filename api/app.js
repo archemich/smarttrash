@@ -1,26 +1,22 @@
 const express = require('express')
-    , app = express()
-    , router = express.Router()
-    , cors = require('cors')
+    , app = express() 
     ;
 
-    const host = 'localhost';
-    const port = 3000;
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
+app.use(require('cors')(require('./controllers/cors')))
 
-    app.use(express.json());
-    app.use(express.urlencoded({extended: true}));
-    app.use(require('cookie-parser')());
-    app.use(cors())
+app.use('/', require('./routes/index'));
+app.use('/users', require('./routes/users.route'));
+app.use('/trash', require('./routes/trash.route'));
 
+app.use((req, res) => {
+    res.status(404).json({ error: { code: 404 } });
+});
 
-    app.use('/', require('./routes/index'));
-    app.use('/users', require('./routes/users.route'));
-    app.use('/trash', require('./routes/trash.route'));
+app.use((req, res, error) => {
+    console.log(error);
+    res.status(500).json({ error: { code: 500 } });
+})
 
-
-    app.use(function (req, res) {
-        res.status(404).send("Not Found")
-    });
-
-    app.listen(port, host, () => console.log(`Server listens http://${host}:${port}`));
-
+app.listen(process.env.PORT || 8080, () => console.log(`Listen on :`, process.env.PORT || 8080));

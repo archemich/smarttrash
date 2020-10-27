@@ -3,16 +3,17 @@
 	"main": "app.js",
 	"private": true,
 	"scripts": {
-		"run": "node ./app.js"
+		"run": "node .",
+		"debug": "nodemon ."
 	},
 	"dependencies": {
-		"cookie": "latest",
-		"cookie-parser": "^1.4.4",
+		"bcrypt": "^5.0.0",
 		"cors": "^2.8.5",
 		"express": "^4.17.1",
-		"js-md5": "^0.7.3",
 		"jws": "^4.0.0",
-		"mysql-utilities": "^1.1.0-alpha.3",
 		"mysql2": "^2.1.0"
+	},
+	"devDependencies": {
+		"nodemon": "^2.0.4"
 	}
 }

@@ -1,6 +1,6 @@
 const jws = require('jws')
 		, header = {alg: 'HS256', typ: 'JWT'}
-		, SECRET_KEY = 'hy9w23g'
+		, SECRET_KEY = 'gf0jrjfi'
 		;
 
 module.exports = {

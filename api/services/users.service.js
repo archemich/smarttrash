@@ -1,4 +1,4 @@
-const db = require("../config/db.js")
+const db = require("./db.js")
     , TrashService = require("./trash.service")
 
 module.exports = {
