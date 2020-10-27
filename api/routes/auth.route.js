@@ -6,6 +6,10 @@ router
     .route('/login')
     .post(AuthController.login)
 
+router
+    .route('/regiter')
+    .post(AuthController.register)
+
 module.exports = router
 
 

@@ -9,6 +9,7 @@ app.use(require('cors')(require('./controllers/cors')))
 app.use('/', require('./routes/index'));
 app.use('/users', require('./routes/users.route'));
 app.use('/trash', require('./routes/trash.route'));
+app.use('/auth', require('./routes/auth.route'));
 
 app.use((req, res) => {
     res.status(404).json({ error: { code: 404 } });
