@@ -29,7 +29,7 @@ module.exports = {
     async getDriverPath(req, res) {
         let user = require('cookie').parse(socket.request.headers.cookie).login;
         if (!jwt.verifyJWT(user)) {
-            return res.status(401).json({message: "Пользователь не авторизован"});
+            return res.status(401).json({error: {message: "User unauthorized"}});
         }
         user = jwt.decodeJWT(user).login;
         let data = await UsersService.getDriverPath();

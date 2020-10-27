@@ -1,4 +1,4 @@
-const db = require('../services/db')
+const db = require('../services/dbinteract')
     , jwt = require('../utils/jwt')
     , bcrypt = require('bcrypt')
     , salt = 10
@@ -7,7 +7,7 @@ const db = require('../services/db')
 
 module.exports = {
     async login({ body }, res) {
-        let user = await db.query(`SELECT * FROM users WHERE login = ?`, [body.login]);
+        let user = await db.getUser(body.login);
 
         if (!user) {
             res.status(422).json({ error: { message: 'User not found' } });
@@ -15,7 +15,7 @@ module.exports = {
         }
 
         if (!bcrypt.compareSync(body.password, user[0][1].password)) {
-            res.status(401).json({message: "Неверный логин или пароль"});
+            res.status(401).json({message: "Wrong login or password"});
             return;
         }
 

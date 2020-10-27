@@ -8,21 +8,21 @@ module.exports = {
             if(result){
                 return res.status(200).json({trashs: result});
             }
-            else return res.status(404).json({message: "Мусорка не найдена"});    //Мусорка по id не найдена.
+            else return res.status(422).json({error: {message: "Trash was not found"}});    //Мусорка по id не найдена.
         }
         else {
             if (result = await TrashService.getTrashs()) {
             return res.status(200).json({trashs: result});
             }
             else {
-                return res.status(404).json({message: "Мусорки не найдены"});     //Мусорки не найдены.
+                return res.status(422).json({error: {message: "Trashes was not found"}});     //Мусорки не найдены.
             }
         }
     },
 
     async updateTrash(req, res) {
         if (!req.body.per || !req.body.id || !req.body.batt) {
-            res.sendStatus(400);
+            res.status(400).json({error: {message: "Can't update trash"}});
             return;
         }
         console.log(req.body);
