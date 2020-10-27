@@ -21,18 +21,19 @@ module.exports = {
     },
 
     async updateTrash(id, per, batt) {
-        result = await db.query('UPDATE trashs SET forClean = if(percent > ?, 0, 1), percent = ?, battery = ? WHERE idtrash = ?', [per, per, batt, id])
+        let result = await db.query('UPDATE trashs SET forClean = if(percent > ?, 0, 1), percent = ?, battery = ? WHERE idtrash = ?', [per, per, batt, id])
         console.log(result)
         return result;
     },
 
     async getDrivers() {
-        result = await db.query('SELECT * FROM users WHERE login != \'manager\'')
-        
+        let result = await db.query('SELECT * FROM users WHERE login != \'manager\'')
+        console.log(result);
+        return result;
     },
 
     async getDriverPath() {
-        result = await db.query('SELECT idtrash, lat, lng FROM trashs WHERE idtrash IN (SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(users.way, \',\', numbers.n), \',\', -1) name FROM (SELECT 1 n UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4) numbers INNER JOIN users ON CHAR_LENGTH(users.way)-CHAR_LENGTH(REPLACE(users.way, \',\', \'\'))>=numbers.n-1 WHERE login = ? ORDER BY n)', [user])
+        let result = await db.query('SELECT idtrash, lat, lng FROM trashs WHERE idtrash IN (SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(users.way, \',\', numbers.n), \',\', -1) name FROM (SELECT 1 n UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4) numbers INNER JOIN users ON CHAR_LENGTH(users.way)-CHAR_LENGTH(REPLACE(users.way, \',\', \'\'))>=numbers.n-1 WHERE login = ? ORDER BY n)', [user])
         console.log(result);
         return result;
     },
@@ -48,7 +49,7 @@ module.exports = {
     },
     
     async getUser(login) {
-        result = await db.query(`SELECT * FROM users WHERE login = ?}`, [login])
+        let result = await db.query(`SELECT * FROM users WHERE login = ?}`, [login])
         console.log(result);
         return result;
     },

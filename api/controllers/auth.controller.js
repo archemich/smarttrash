@@ -10,7 +10,7 @@ module.exports = {
         let user = await db.getUser(body.login);
 
         if (!user) {
-            res.status(422).json({ error: { message: 'User not found' } });
+            res.status(422).json({error: {message: 'User not found' } });
             return;
         }
 
@@ -19,10 +19,10 @@ module.exports = {
             return;
         }
 
-        res.json({ status: 'OK', token: jwt.generateJWT({login: user[0][0].login}) });
+        res.json({status: 'OK', token: jwt.generateJWT({login: user[0][0].login}) });
     },
     
     async register({ body: { password } }, res) {
-        res.json({ crypt: bcrypt.hashSync(password, salt) });
+        res.json({crypt: bcrypt.hashSync(password, salt) });
     }
 }
