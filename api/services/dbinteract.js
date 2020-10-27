@@ -1,9 +1,30 @@
-const db = require("./db.js")
-    , TrashService = require("./trash.service")
+"use strict"
+const db = require('./db');
 
 module.exports = {
-    async getTrashs(filter) {
-        TrashService.getTrashs(id = null, filter);
+    async getTrashs(id, filter) {
+        if(id){
+            let result = await db.query(`SELECT * FROM trashs WHERE id = ?`, [id]);
+            console.log(result);
+            return result;
+        } else{ 
+            if (filter) {
+               let result = await db.query(`SELECT * FROM trashs ORDER BY ?`, [filter]);
+                console.log(result);
+                return result;
+            }
+            else {
+                let result = db.query('SELECT * FROM trashs');
+                console.log(result);
+                return result;
+            }
+        }
+    },
+
+    async updateTrash(id, per, batt) {
+        result = await db.query('UPDATE trashs SET forClean = if(percent > ?, 0, 1), percent = ?, battery = ? WHERE idtrash = ?', [per, per, batt, id])
+        console.log(result)
+        return result;
     },
 
     async getDrivers() {
@@ -25,5 +46,11 @@ module.exports = {
     async delWay(login) {
         con.queryValue('SELECT way FROM users WHERE login = ?', [login], (err, way) => {con.query('UPDATE trashs SET forClean = 0 WHERE idtrash IN (?)', [way.split(',')], () => {})}); 
         con.update('users', {login, way: null}, () => {})
-	},
+    },
+    
+    async getUser(login) {
+        result = await db.query(`SELECT * FROM users WHERE login = ?}`, [login])
+        console.log(result);
+        return result;
+    },
 }
