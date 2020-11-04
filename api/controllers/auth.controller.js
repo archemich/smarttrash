@@ -1,4 +1,4 @@
-const db = require('../services/dbinteract')
+const dbInteractor = require('../services/dbinteractor')
     , jwt = require('../utils/jwt')
     , bcrypt = require('bcrypt')
     , salt = 10
@@ -7,7 +7,7 @@ const db = require('../services/dbinteract')
 
 module.exports = {
     async login({ body }, res) {
-        let user = await db.getUser(body.login);
+        let user = await dbInteractor.getUser(body.login);
 
         if (!user) {
             res.status(422).json({error: {message: 'User not found' } });
