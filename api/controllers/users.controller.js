@@ -23,7 +23,7 @@ module.exports = {
 				sendData.trashs = trashs;
 			}
 			if (driver) {
-				let drivers = await dbInteractor.getDrivers();
+				let drivers = await dbInteractor.getUsers(null, true);
 				sendData.drivers = drivers;
 			}
 			return res.status(200).json({data: {sendData}});

@@ -36,13 +36,6 @@ module.exports = {
         return result;
     },
 
-    async getDrivers() {
-        let result = await db.query('SELECT user_id, login FROM users WHERE role=0;');
-        result = result[0][0];
-        console.log(result);
-        return result;
-    },
-
     // async getDriverPath() {
     //     let result = await db.query('SELECT trash_id, lat, lng FROM trashs WHERE trash_id IN (SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(users.way, \',\', numbers.n), \',\', -1) name FROM (SELECT 1 n UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4) numbers INNER JOIN users ON CHAR_LENGTH(users.way)-CHAR_LENGTH(REPLACE(users.way, \',\', \'\'))>=numbers.n-1 WHERE login = ? ORDER BY n)', [user])
     //     console.log(result);
@@ -61,8 +54,17 @@ module.exports = {
         return result;
     },
 
-    async getUser(login) {
-        let result = await db.query('SELECT * FROM users WHERE login = ?;', [login]);
+    async getUsers(login, isDrivers) {
+        let result;
+        if(login) {
+            result = await db.query('SELECT user_id, login, role FROM users WHERE login = ?;', [login]);
+        }
+        else if(isDrivers) {
+            result = await db.query('SELECT user_id, login FROM users WHERE role=0;');
+        }
+        else {
+            result = await db.query('SELECT user_id, login, role FROM users;');
+        }
         result = result[0][0];
         console.log(result);
         return result;
