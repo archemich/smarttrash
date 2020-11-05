@@ -12,8 +12,7 @@ module.exports = {
                     case 'percent': 
                         filter = 'percent DESC'; break;
 					default:
-
-                        filter = 'idtrash ASC';
+                        filter = 'trash_id ASC';
 				}
 				let trashs = dbInteractor.getTrashs(filter);
 				sendData.trashs = trashs[0];
@@ -25,15 +24,11 @@ module.exports = {
 			return res.status(200).json({data: {sendData}});
         },
         
-    async getDriverPath(req, res) {
-        let user = require('cookie').parse(socket.request.headers.cookie).login;
-        if (!jwt.verifyJWT(user)) {
-            return res.status(401).json({error: {message: "User unauthorized"}});
-        }
-        user = jwt.decodeJWT(user).login;
-        let data = await dbInteractor.getDriverPath();
-        return res.status(200).json({data: data[0].map(el => [el.lat, el.lng])});
-    },
+    // async getDriverPath(req, res) {
+    //     user = jwt.decodeJWT(user).login;
+    //     let data = await dbInteractor.getDriverPath();
+    //     return res.status(200).json({data: data[0].map(el => [el.lat, el.lng])});
+    // },
     
     async uploadCSV(req, res) {
         let file = req.file;
