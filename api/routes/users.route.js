@@ -3,15 +3,21 @@ const router = require('express').Router()
     , upload = require('multer')({dest: 'uploads/', fileFilter: (require("../controllers/multer"))});
     ;
 
+
+router
+    .route('/')
+    .get(UsersController.getUsers)
+    ;
+    
 router
     .route('/manager')
     .get(UsersController.getManagerData)
     ;
 
-router
-    .route('/driver')
-    .get(UsersController.getDriverPath)
-    ;
+// router
+//     .route('/driver')
+//     .get(UsersController.getDriverPath)
+//     ;
 
 router
     .route('/upload')

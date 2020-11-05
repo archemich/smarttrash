@@ -1,27 +1,33 @@
 const db = require('./db');
 
 module.exports = {
+    async getUsers() {
+        let result = await db.query('SELECT user_id, login, role FROM users;')[0][0];
+        console.log(result);
+        return result;
+    },
+
     async getTrashs(id, filter) {
         if (id) {
-            let result = await db.query(`SELECT * FROM trashs WHERE trash_id = ?`, [id]);
+            let result = await db.query('SELECT * FROM trashs WHERE trash_id = ?;', [id])[0][0];
             console.log(result);
             return result;
         } else {
             if (filter) {
-                let result = await db.query(`SELECT * FROM trashs ORDER BY ?`, [filter]);
+                let result = await db.query('SELECT * FROM trashs ORDER BY ?;', [filter]);
                 console.log(result);
-                return result;
+                return result[0];
             }
             else {
-                let result = await db.query('SELECT * FROM trashs');
+                let result = await db.query('SELECT * FROM trashs;');
                 console.log(result);
-                return result;
+                return result[0];
             }
         }
     },
 
     async updateTrash(id, per, batt) {
-        let result = await db.query('UPDATE trashs SET percent = ?, battery = ? WHERE trash_id = ?;', [per, batt, id]);
+        let result = await db.query('UPDATE trashs SET percent = ?, battery = ? WHERE trash_id = ?;', [per, batt, id])[0][0];
         console.log(result)
         return result;
     },

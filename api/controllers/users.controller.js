@@ -1,6 +1,11 @@
 const dbInteractor = require('../services/dbinteractor');
 
 module.exports = {
+    async getUsers(req, res) {
+        let result = await dbInteractor.getUsers();
+        return res.status(200).json({data: result});
+    },
+
     async getManagerData(req, res) {
         console.log(req.body);
         if (!req.body) 

@@ -4,7 +4,7 @@ const dbInteractor = require("../services/dbinteractor")
 module.exports = {
     async getTrash(req, res) {
         if (req.query.id) {
-            let result = await dbInteractor.getTrashs(id);
+            let result = await dbInteractor.getTrashs(req.query.id);
             if (result) {
                 return res.status(200).json({ data: { trashs: result } });
             }

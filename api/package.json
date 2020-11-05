@@ -4,7 +4,7 @@
 	"private": true,
 	"scripts": {
 		"run": "node .",
-		"debug": "nodemon ."
+		"dev": "nodemon ."
 	},
 	"dependencies": {
 		"bcrypt": "^5.0.0",
