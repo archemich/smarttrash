@@ -18,13 +18,13 @@ module.exports = {
                         filter = 'percent DESC'; break;
 					default:
                         filter = 'trash_id ASC';
-				}
-				let trashs = dbInteractor.getTrashs(filter);
-				sendData.trashs = trashs[0];
+                }
+				let trashs = await dbInteractor.getTrashs(null,filter);
+				sendData.trashs = trashs;
 			}
 			if (driver) {
-				let drivers = dbInteractor.getDrivers();
-				sendData.drivers = drivers[0];
+				let drivers = await dbInteractor.getDrivers();
+				sendData.drivers = drivers;
 			}
 			return res.status(200).json({data: {sendData}});
         },

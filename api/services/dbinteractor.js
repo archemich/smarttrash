@@ -2,38 +2,43 @@ const db = require('./db');
 
 module.exports = {
     async getUsers() {
-        let result = await db.query('SELECT user_id, login, role FROM users;')[0][0];
+        let result = await db.query('SELECT user_id, login, role FROM users;');
+        result = result[0][0];
         console.log(result);
         return result;
     },
 
     async getTrashs(id, filter) {
         if (id) {
-            let result = await db.query('SELECT * FROM trashs WHERE trash_id = ?;', [id])[0][0];
+            let result = await db.query('SELECT * FROM trashs WHERE trash_id = ?;', [id]);
+            result = result[0][0];
             console.log(result);
             return result;
         } else {
             if (filter) {
                 let result = await db.query('SELECT * FROM trashs ORDER BY ?;', [filter]);
+                result = result[0][0];
                 console.log(result);
-                return result[0];
+                return result;
             }
             else {
                 let result = await db.query('SELECT * FROM trashs;');
+                result = result[0][0];
                 console.log(result);
-                return result[0];
+                return result;
             }
         }
     },
 
     async updateTrash(id, per, batt) {
-        let result = await db.query('UPDATE trashs SET percent = ?, battery = ? WHERE trash_id = ?;', [per, batt, id])[0][0];
+        let result = await db.query('UPDATE trashs SET percent = ?, battery = ? WHERE trash_id = ?;', [per, batt, id]);
         console.log(result)
         return result;
     },
 
     async getDrivers() {
-        let result = await db.query('SELECT * FROM users WHERE role=0;');
+        let result = await db.query('SELECT user_id, login FROM users WHERE role=0;');
+        result = result[0][0];
         console.log(result);
         return result;
     },
@@ -57,7 +62,8 @@ module.exports = {
     },
 
     async getUser(login) {
-        let result = await db.query('SELECT * FROM users WHERE login = ?;', [login])
+        let result = await db.query('SELECT * FROM users WHERE login = ?;', [login]);
+        result = result[0][0];
         console.log(result);
         return result;
     },

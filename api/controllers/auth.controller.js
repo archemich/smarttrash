@@ -14,12 +14,12 @@ module.exports = {
             return;
         }
 
-        if (!bcrypt.compareSync(body.password, user[0][1].password)) {
+        if (!bcrypt.compareSync(body.password, user.password)) {
             res.status(401).json({message: "Wrong login or password"});
             return;
         }
 
-        res.json({status: 'OK', token: jwt.generateJWT({login: user[0][0].login}) });
+        res.json({status: 'OK', token: jwt.generateJWT({login: user.login}) });
     },
     
     async register({ body: { password } }, res) {

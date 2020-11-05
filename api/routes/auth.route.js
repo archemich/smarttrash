@@ -7,7 +7,7 @@ router
     .post(AuthController.login)
 
 router
-    .route('/regiter')
+    .route('/register')
     .post(AuthController.register)
 
 module.exports = router
