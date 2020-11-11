@@ -23,7 +23,7 @@ module.exports = {
             }
             else {
                 let result = await db.query('SELECT * FROM trashs;');
-                result = result[0][0];
+                result = result[0];
                 console.log(result);
                 return result;
             }

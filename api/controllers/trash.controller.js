@@ -8,7 +8,7 @@ module.exports = {
             if (result) {
                 return res.status(200).json({ data: { trashs: result } });
             }
-            else return res.status(422).json({ error: { message: "Trash was not found" } });    //Мусорка по id не найдена.
+            else return res.status(422).json({ error: { message: "Trash was not found" } }); 
         }
         else {
             let result = await dbInteractor.getTrashs();
