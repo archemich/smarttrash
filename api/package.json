@@ -1,5 +1,5 @@
 {
-	"name": "smarttrash",
+	"name": "trash-api",
 	"main": "app.js",
 	"private": true,
 	"scripts": {

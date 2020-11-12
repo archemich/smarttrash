@@ -1,23 +1,22 @@
-const express = require('express')
-    , app = express() 
-    ;
+const express = require('express'),
+	app = express();
 
-app.use(express.json());
-app.use(express.urlencoded({extended: true}));
-app.use(require('cors')(require('./controllers/cors')))
+app
+	.use(require('./controllers/cors'))
+	.use(express.json())
+	.use(express.urlencoded({ extended: true }))
 
-app.use('/', require('./routes/index'));
-app.use('/users', require('./routes/users.route'));
-app.use('/trash', require('./routes/trash.route'));
-app.use('/auth', require('./routes/auth.route'));
+	.use('/', require('./routes/index'))
+	.use('/auth', require('./routes/auth'))
+	.use('/users', require('./routes/users'))
+	.use('/trash', require('./routes/trash'));
 
-app.use((req, res) => {
-    res.status(404).json({ error: { code: 404 } });
-});
-
-app.use((req, res, error) => {
-    console.log(error);
-    res.status(500).json({ error: { code: 500 } });
-})
+// Handle 404 AND 500
+app
+	.use((req, res) => res.status(404).json({ error: { type: 'NOT FOUND', code: 404 } }))
+	.use((error, req, res) => {
+		console.warn(error);
+		res.status(500).json({ error: { type: 'INTERNAL SERVER ERROR', code: 500 } });
+	});
 
 app.listen(process.env.PORT || 8080, () => console.log(`Listen on :`, process.env.PORT || 8080));
