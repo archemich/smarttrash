@@ -1,30 +1,9 @@
-const dbInteractor = require('../services/dbinteractor');
+const db = require('../services/db');
 
 module.exports = {
-	async getUsers(req, res) {
-		let result = await dbInteractor.getUsers();
-		return res.status(200).json({ data: result });
-	},
-
-	async getManagerData(req, res) {
-		console.log(req.body);
-		if (!req.body) return res.status(400).json({ error: { message: 'Bad request' } });
-		let { trash, driver, filter } = req.body;
-		let sendData = {};
-		if (trash) {
-			switch (filter) {
-				case 'percent':
-					filter = 'percent DESC';
-					break;
-				default:
-					filter = 'trash_id ASC';
-			}
-			sendData.trashs = await dbInteractor.getTrashs(null, filter);
-		}
-		if (driver) {
-			sendData.drivers = await dbInteractor.getUsers(null, true);
-		}
-		return res.status(200).json({ data: { sendData } });
+	async getUsers({ query: { role = 0 } }, res) {
+		const result = await db.query('SELECT user_id, login, role FROM users WHERE role = ?', [role]);
+		res.json({ status: 'OK', users: result[0] });
 	},
 
 	// async getDriverPath(req, res) {
@@ -33,13 +12,14 @@ module.exports = {
 	//     return res.status(200).json({data: data[0].map(el => [el.lat, el.lng])});
 	// },
 
-	async uploadCSV(req, res) {
-		let file = req.file;
+	async uploadCSV({ file }, res) {
 		console.log(file);
+
 		if (!file) {
 			res.status(400).json({ error: { message: 'Uploading error' } });
 			return;
 		}
+
 		let result = await dbInteractor.loadCSV(req.file.path, users);
 		res.status(200).json({ message: 'File has been uploaded', data: { result } });
 	},

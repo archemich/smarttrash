@@ -4,8 +4,6 @@ const router = require('express').Router(),
 
 router.route('/').get(usersCtrl.getUsers);
 
-router.route('/manager').get(usersCtrl.getManagerData);
-
 // router
 //     .route('/driver')
 //     .get(usersCtrl.getDriverPath)
