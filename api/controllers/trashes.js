@@ -41,7 +41,11 @@ module.exports = {
 			return;
 		}
 
-		await db.query('UPDATE trashes SET percent = ?, battery = ? WHERE trash_id = ?;', [percent, battery, id]);
+		await db.query('UPDATE trashes SET percent = ?, battery = ?, packages = packages + 1 WHERE trash_id = ?;', [
+			percent,
+			battery,
+			id,
+		]);
 		res.json({ status: 'OK' });
 	},
 
