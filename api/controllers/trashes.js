@@ -1,4 +1,5 @@
 const db = require('../services/db');
+const exportCSV = require('../utils/exportCSV');
 
 module.exports = {
 	async getTrashes({ query: { filter } }, res) {
@@ -49,7 +50,7 @@ module.exports = {
 		res.json({ status: 'OK' });
 	},
 
-	async uploadCSV({ file }, res) {
+	async upload({ file }, res) {
 		console.log(file);
 
 		if (!file) {
@@ -57,7 +58,15 @@ module.exports = {
 			return;
 		}
 
-		let result = await dbInteractor.loadCSV(file.path, trashs);
-		res.status(200).json({ message: 'File has been uploaded', data: { result } });
+		for (const { lat, lng } of exportCSV(file.path)) {
+			if (!lat || !lng) {
+				res.status(422).json({ error: { message: 'Csv dont contain required field. Some do not create.' } });
+				return;
+			}
+
+			await db.query('INSERT INTO trashes(lat, lng) VALUE (?, ?)', [lat, lng]);
+		}
+
+		res.json({ status: 'OK' });
 	},
 };

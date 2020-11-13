@@ -6,6 +6,6 @@ router.route('/').get(trashCtrl.getTrashes);
 
 router.route('/:id').get(trashCtrl.getTrash).put(trashCtrl.updateTrash);
 
-router.route('/upload').post(uploadCtrl, trashCtrl.uploadCSV);
+router.route('/upload').post(uploadCtrl, trashCtrl.upload);
 
 module.exports = router;

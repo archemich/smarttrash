@@ -1,14 +1,6 @@
 const router = require('express').Router(),
-	usersCtrl = require('../controllers/users'),
-	uploadCtrl = require('../controllers/multer');
+	usersCtrl = require('../controllers/users');
 
 router.route('/').get(usersCtrl.getUsers);
-
-// router
-//     .route('/driver')
-//     .get(usersCtrl.getDriverPath)
-//     ;
-
-router.route('/upload').post(uploadCtrl, usersCtrl.uploadCSV);
 
 module.exports = router;
