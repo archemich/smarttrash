@@ -27,4 +27,31 @@ module.exports = {
 	async register({ body: { password } }, res) {
 		res.json({ crypt: bcrypt.hashSync(password, bcrypt.genSaltSync()) });
 	},
+
+	async verifyToken(req, res, next) {
+		if (!req.headers.authorization || req.headers.authorization.split(' ')[0] !== 'Bearer') {
+			res.status(401).json({ error: { message: 'InvalidToken', messageCode: 0, type: 'Unauthorized', code: 401 } });
+			return;
+		}
+
+		req.user = req.headers.authorization.split(' ')[1];
+
+		if (!jwt.verifyJWT(req.user)) {
+			res.status(401).json({ error: { message: 'InvalidToken', messageCode: 0, type: 'Unauthorized', code: 401 } });
+			return;
+		}
+
+		req.user = jwt.decodeJWT(req.user);
+		next();
+	},
+
+	onlyManager({ user: { role } }, res, next) {
+		if (role == 1) return next();
+		res.status(403).json({ error: { message: 'AccessDenied', messageCode: 0, type: 'Forbidden', code: 403 } });
+	},
+
+	onlyDriver({ user: { role } }, res, next) {
+		if (role == 0) return next();
+		res.status(403).json({ error: { message: 'AccessDenied', messageCode: 0, type: 'Forbidden', code: 403 } });
+	},
 };

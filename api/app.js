@@ -9,7 +9,8 @@ app
 	.use('/', require('./routes/index'))
 	.use('/auth', require('./routes/auth'))
 	.use('/users', require('./routes/users'))
-	.use('/trashes', require('./routes/trashes'));
+	.use('/trashes', require('./routes/trashes'))
+	.use('/ways', require('./routes/ways'));
 
 // Handle 404 AND 500
 app

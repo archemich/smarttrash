@@ -12,28 +12,16 @@ module.exports = {
 		}
 
 		let trashes = await db.query('SELECT * FROM trashes ORDER BY ?', [filter]);
-		trashes = trashes[0].map(el => ({ ...el, lastUpdate: el.lastUpdate.valueOf() }));
 
-		if (!trashes.length) {
+		if (!trashes[0].length) {
 			res.status(422).json({ error: { message: 'Trashes was not found' } });
 			return;
 		}
 
-		res.json({ status: 'OK', trashes });
-	},
-
-	async getTrash({ params: { id } }, res) {
-		let trash = await db.query('SELECT * FROM trashes WHERE trash_id = ?', [id]);
-		trash = trash[0][0];
-
-		if (!trash) {
-			res.status(422).json({ error: { message: 'Trash was not found' } });
-			return;
-		}
-
-		trash.lastUpdate = trash.lastUpdate.valueOf();
-
-		res.json({ status: 'OK', trash });
+		res.json({
+			status: 'OK',
+			trashes: trashes[0].map(el => ({ ...el, lastUpdate: el.lastUpdate.valueOf() })),
+		});
 	},
 
 	async updateTrash({ params: { id }, body: { percent, battery } }, res) {
@@ -42,11 +30,10 @@ module.exports = {
 			return;
 		}
 
-		await db.query('UPDATE trashes SET percent = ?, battery = ?, packages = packages + 1 WHERE trash_id = ?;', [
-			percent,
-			battery,
-			id,
-		]);
+		await db.query(
+			'UPDATE trashes SET percent = ?, battery = ?, packages = packages + 1 WHERE trash_id = ?',
+			[percent, battery, id]
+		);
 		res.json({ status: 'OK' });
 	},
 

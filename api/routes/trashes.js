@@ -1,11 +1,12 @@
 const router = require('express').Router(),
 	trashCtrl = require('../controllers/trashes'),
-	uploadCtrl = require('../controllers/multer');
+	uploadCtrl = require('../controllers/multer'),
+	{ verifyToken, onlyManager } = require('../controllers/auth');
 
 router.route('/').get(trashCtrl.getTrashes);
 
-router.route('/:id').get(trashCtrl.getTrash).put(trashCtrl.updateTrash);
+router.route('/:id').put(trashCtrl.updateTrash);
 
-router.route('/upload').post(uploadCtrl, trashCtrl.upload);
+router.route('/upload').post(verifyToken, onlyManager, uploadCtrl, trashCtrl.upload);
 
 module.exports = router;
