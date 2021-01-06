@@ -1,9 +1,10 @@
+const { verify } = require('jws');
 const db = require('../services/db'),
 	jwt = require('../utils/jwt'),
 	bcrypt = require('bcrypt');
 
 module.exports = {
-	async login({ body: { login, password } }, res) {
+	async login({ body: { login, password }}, res) {
 		let user = await db.query('SELECT * FROM users WHERE login = ?', [login]);
 		user = user[0][0];
 
@@ -17,11 +18,16 @@ module.exports = {
 			return;
 		}
 
-		res.json({
+			res.json({
 			status: 'OK',
 			token: jwt.generateJWT({ id: user.user_id, role: user.role }),
 			user: { ...user, password: undefined },
 		});
+	},
+
+	verify({body:{token}}, res) {
+		let verify = jwt.verifyJWT(token);
+		res.json(verify);
 	},
 
 	async register({ body: { password } }, res) {

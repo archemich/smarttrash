@@ -18,7 +18,6 @@ export default {
 
   // Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
   plugins: [
-    { src: '~plugins/ymapPlugin.js',  mode: 'client' }
   ],
 
   // Auto import components (https://go.nuxtjs.dev/config-components)
@@ -30,7 +29,9 @@ export default {
 
   // Modules (https://go.nuxtjs.dev/config-modules)
   modules: [
-    '@nuxtjs/axios'
+    '@nuxtjs/axios',
+    'nuxt-leaflet',
+    ['cookie-universal-nuxt', {alias: "cookie"}],
   ],
 
   // Build Configuration (https://go.nuxtjs.dev/config-build)

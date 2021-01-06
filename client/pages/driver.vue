@@ -1,29 +1,42 @@
 <template>
-    <div class="container">
-        <NuxtLink to="/">Home</NuxtLink>
-        <yandex-map
-        :coords="[47.221463, 38.914256]"
-        zoom="12"
-        v-on:map-was-initialized="initHandler"
-        />
-    </div>
+    <section>
+        <p>Окно водителя</p>
+        <div id="map-wrap" style="height: 100vh">
+            <client-only>
+                <l-map :zoom=13 :center="[47.221100, 38.914639]">
+                    <l-tile-layer url="http://{s}.tile.osm.org/{z}/{x}/{y}.png"></l-tile-layer>
+                    <l-marker v-for="trash of trashes" :key="trash.trash_id" :lat-lng="[trash.lat, trash.lng]">
+                        <l-tooltip>Заполненность контейнера: {{ trash.percent }}%<br> Заряд датчика: {{ trash.battery }}%</l-tooltip>
+                    </l-marker>
+                </l-map>
+            </client-only>
+        </div>
+    </section>
 </template>
-
 
 <script>
 export default {
-    data() { return {
-        myMap: null
-    }},
+    middleware: 'authdriver',
+    
+    async asyncData({$axios}){
+        let data = await $axios.$get('http://localhost:8080/trashes');
+        const trashes = data.trashes;
+        return { trashes };
+    },
 
-    mounted(){
-        
+    data () {
+        return {
+            trashes : {},
+        }
+    },
+
+    mounted() {
     },
 
     methods: {
-        inithandler: function(obj) {
-            alert(obj);
-        }
     }
 }
 </script>
+
+<style scoped>
+</style>

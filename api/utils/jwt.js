@@ -11,7 +11,14 @@ module.exports = {
 	},
 
 	verifyJWT: (jwt) => {
-		return jws.decode(jwt) ? jws.verify(jwt, header.alg, SECRET_KEY) : false;
+		let decode = jws.decode(jwt);
+		if (decode)
+		{
+			let verified = jws.verify(jwt, header.alg, SECRET_KEY);
+			let role = decode.payload.role;
+			return {verified,role};
+		}
+		return false;
 	},
 
 	decodeJWT: (jwt) => {
