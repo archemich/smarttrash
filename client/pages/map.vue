@@ -14,7 +14,7 @@
 <script>
 export default {
     async asyncData({$axios}){
-        let data = await $axios.$get('http://localhost:8080/trashes');
+        let data = await $axios.$get('/trashes');
         const trashes = data.trashes;
         return { trashes };
     },

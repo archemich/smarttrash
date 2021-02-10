@@ -33,10 +33,12 @@ export default {
 
             let token;
             try {
-                const res = await this.$axios.$post('http://localhost:8080/auth/login', {login: this.login, password: this.password});
+                const res = await this.$axios.$post('/auth/login', {login: this.login, password: this.password});
                 token = res.token;
                 let role = res.user.role;
-                this.$cookie.set('token', token, {path: '/', maxAge: 3600});
+                let user = res.user;
+                this.$store.dispatch("auth/login", {token,user});
+                
                 if (role === 0) {
                     this.$router.push('/driver');
                 }
@@ -45,9 +47,7 @@ export default {
                 }
             }
             catch(e) {
-                if (this.$cookie.get('token')) {
-                    this.$cookie.remove('token');
-                }
+                this.$store.dispatch('auth/logout');
                 console.log(e)
             }
         },

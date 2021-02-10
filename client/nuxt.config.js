@@ -34,6 +34,10 @@ export default {
     ['cookie-universal-nuxt', {alias: "cookie"}],
   ],
 
+  axios: {
+    baseURL: "http://localhost:8080"
+  },
+
   // Build Configuration (https://go.nuxtjs.dev/config-build)
   build: {
   },

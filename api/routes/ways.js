@@ -6,6 +6,7 @@ router.route('/me').get(verifyToken, onlyDriver, waysCtrl.getWay);
 
 router
 	.route('/:id')
+	.get(verifyToken,onlyManager, waysCtrl.getWay)
 	.post(verifyToken, onlyManager, waysCtrl.create)
 	.delete(verifyToken, onlyManager, waysCtrl.delete);
 

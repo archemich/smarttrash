@@ -26,7 +26,7 @@ module.exports = {
 	},
 
 	verify({body:{token}}, res) {
-		let verify = jwt.verifyJWT(token);
+		let verify = jwt.verifyJWT(token.split(' ')[1]);
 		res.json(verify);
 	},
 
