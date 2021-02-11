@@ -7,9 +7,14 @@
             <client-only>
                 <l-map :zoom=13 :center="[47.221100, 38.914639]">
                     <l-tile-layer url="http://{s}.tile.osm.org/{z}/{x}/{y}.png"></l-tile-layer>
-                    <l-marker v-for="trash of trashes" :key="trash.trash_id" :lat-lng="[trash.lat, trash.lng]">
-                        <l-tooltip>Заполненность контейнера: {{ trash.percent }}%<br> Заряд датчика: {{ trash.battery }}%</l-tooltip>
-                    </l-marker>
+                    <div v-if="!selectedUserRoute" class="markers-wrapper">
+                        <l-marker  v-for="trash of trashes" :key="trash.trash_id" :lat-lng="[trash.lat, trash.lng]">
+                            <l-tooltip>Заполненность контейнера: {{ trash.percent }}%<br> Заряд датчика: {{ trash.battery }}%</l-tooltip>
+                        </l-marker>
+                    </div>
+                    <div v-else-if="selectedUserRoute" class="markers-wrapper">
+                        <l-marker  v-for="trash of selectedUserRoute" :key="trash.trash_id" :lat-lng="[trash.lat, trash.lng]"></l-marker>
+                    </div>
                 </l-map>
             </client-only>
         </div>
@@ -36,15 +41,23 @@ export default {
             trashes : {},
             drivers: {},
             selectedUser: null,
-            selectedUserRoute: {}
+            selectedUserRoute: null
         }
     },
 
     created() {
-        this.$nuxt.$on('userSelected', async (user) => {
+        this.$nuxt.$on('userSelected', (user) => {
             this.selectedUser = user;
-            selectedUserRoute = await (this.$axios.$get(`/ways/${user.user_id}`));
-            console.log(selectedUserRoute);
+            let token = this.$cookie.get('token');
+            this.$axios.$get(`/ways/${user.user_id}`, {headers: {Authorization: token}})
+            .then((res) => {
+                console.log(res.way)
+                this.selectedUserRoute = res.way
+            })
+            .catch((e) => {
+                console.error('Error occured '+e);
+            });
+            
         })
     }
 }

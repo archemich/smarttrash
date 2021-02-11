@@ -1,7 +1,11 @@
 const db = require('../services/db');
 
 module.exports = {
-	async getWay({ user: { id } }, res) {
+	async getWay({user, params}, res) {
+		let id = user.id;
+		if (params.id) {
+			id = params.id;
+		}
 		const way = await db.query(
 			'SELECT lat, lng FROM trashes_in_users LEFT JOIN trashes using(trash_id) WHERE user_id = ?',
 			[id]
