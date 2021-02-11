@@ -7,7 +7,7 @@ module.exports = {
 			id = params.id;
 		}
 		const way = await db.query(
-			'SELECT lat, lng FROM trashes_in_users LEFT JOIN trashes using(trash_id) WHERE user_id = ?',
+			'SELECT trash_id, lat, lng FROM trashes_in_users LEFT JOIN trashes using(trash_id) WHERE user_id = ?',
 			[id]
 		);
 		res.json({ status: 'OK', way: way[0] });
